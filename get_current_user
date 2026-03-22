@@ -1,0 +1,19 @@
+def get_current_user(request: Request):
+    token = request.cookies.get("access_token")
+    if not token:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+
+    payload = decode_access_token(token)
+
+    user_id = payload.get("user_id")
+    role = payload.get("role")
+    tenant_id = payload.get("tenant_id")  # NEW
+
+    if not user_id or not role or not tenant_id:
+        raise HTTPException(status_code=401, detail="Invalid token payload")
+
+    return {
+        "id": user_id,
+        "role": role,
+        "tenant_id": tenant_id,
+    }

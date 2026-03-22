@@ -1,0 +1,25 @@
+fastapi
+uvicorn[standard]
+sqlalchemy
+alembic
+python-jose[cryptography]
+passlib[bcrypt]
+pydantic>=2.5
+httpx
+pymysql
+PyJWT
+python-multipart
+jinja2
+yagmail
+reportlab
+apscheduler
+pydantic-settings
+email-validator
+"pydantic[email]"
+passlib[argon2]
+slowapi
+apscheduler
+psycopg2-binary
+argon2-cffi
+itsdangerous
+celery redis

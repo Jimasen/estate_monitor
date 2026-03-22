@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Global Pricing Panel</title>
+<link rel="stylesheet" href="/static/css/pricing.css">
+</head>
+<body>
+<h2>Global Pricing Control Panel</h2>
+
+
+<form id="pricingForm">
+<input placeholder="Country Code (US, NG, DE)" id="country" required>
+<input placeholder="Plan (Pro, Starter)" id="plan" required>
+<input placeholder="Monthly Price" id="monthly" type="number" required>
+<input placeholder="Yearly Price" id="yearly" type="number" required>
+<input placeholder="Promo Price (Optional)" id="promo" type="number">
+<input placeholder="Trial Days" id="trial" type="number">
+
+
+<button type="submit">Update Pricing</button>
+</form>
+
+
+<script src="/static/js/pricing.js"></script>
+</body>
+</html>

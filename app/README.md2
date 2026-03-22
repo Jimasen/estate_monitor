@@ -1,0 +1,102 @@
+#THIS ISNFOR BACKEND UPGRADE
+
+Recommended PostgreSQL Setup (Local)
+
+Install:
+
+sudo apt install postgresql postgresql-contrib
+
+Create DB:
+
+sudo -u postgres psql
+CREATE DATABASE estate_monitor;
+CREATE USER estate_user WITH PASSWORD 'strongpassword';
+ALTER ROLE estate_user SET client_encoding TO 'utf8';
+ALTER ROLE estate_user SET default_transaction_isolation TO 'read committed';
+ALTER ROLE estate_user SET timezone TO 'UTC';
+GRANT ALL PRIVILEGES ON DATABASE estate_monitor TO estate_user;
+
+Connection string format:
+
+postgresql+psycopg2://estate_user:strongpassword@localhost:5432/estate_monitor
+🧩 PART 2 — Scheduler + WebSockets + Multi-router (Postgres Safety)
+
+Your system uses:
+
+scheduler.py
+
+scheduler_triggers.py
+
+subscription_cron_service.py
+
+WebSockets
+
+Payment webhooks
+
+PostgreSQL handles concurrent transactions better.
+
+But we must ensure:
+
+Use:
+pool_pre_ping=True
+pool_recycle=300
+And for scheduler:
+
+Ensure it creates independent DB session.
+
+I will fix that after seeing session.py.
+
+📱 PART 3 — Flutter Cleanup & Standardization
+
+Now frontend.
+
+Your structure is good but duplicated services exist:
+
+I see:
+
+lib/core/services/api_service.dart
+lib/data/services/api_service.dart
+api_service.dart (root)
+
+
+#STEP 1 — Install PostgreSQL Driver
+
+Inside your venv:
+
+pip uninstall pymysql
+pip install psycopg2-binary
+
+
+#STEP 8 — CLEAN MIGRATIONS (IMPORTANT)
+
+Since you’re switching DB type:
+
+Delete old versions:
+rm -rf migrations/versions/*
+
+Then:
+
+alembic revision --autogenerate -m "initial_postgresql_schema"
+alembic upgrade head
+
+You now have clean PostgreSQL schema.
+
+#CHECK YOUR MODELS FOR MYSQL SPECIFIC CODE
+
+Search your project:
+
+grep -r "mysql" app/
+grep -r "CURRENT_TIMESTAMP" app/
+grep -r "onupdate" app/
+
+Remove MySQL-specific column configs like:
+
+server_default=text("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
+
+Replace with:
+
+from sqlalchemy.sql import func
+
+updated_at = Column(DateTime, onupdate=func.now())
+
+
